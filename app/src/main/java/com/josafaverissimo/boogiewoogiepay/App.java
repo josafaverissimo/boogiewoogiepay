@@ -17,9 +17,7 @@ public class App {
       return;
     }
 
-    var app = Javalin.create().start(8080);
     var router = new Router();
-
-    router.register(app);
+    var app = Javalin.create(config -> router.register(config)).start(9999);
   }
 }
