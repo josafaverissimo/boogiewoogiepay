@@ -1,4 +1,4 @@
-package com.josafaverissimo.boogiewoogiepay.presentation.infraestructure.interfaces;
+package com.josafaverissimo.boogiewoogiepay.infraestructure.interfaces;
 
 import io.javalin.Javalin;
 
