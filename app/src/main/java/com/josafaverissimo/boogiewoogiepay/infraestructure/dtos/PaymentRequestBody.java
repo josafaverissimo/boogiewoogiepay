@@ -1,3 +1,4 @@
 package com.josafaverissimo.boogiewoogiepay.infraestructure.dtos;
 
-public record PaymentRequestBody(String correlationId, double amount) {}
+public record PaymentRequestBody(String correlationId, double amount) {
+}
