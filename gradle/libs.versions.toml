@@ -7,7 +7,7 @@ junit-jupiter = "5.12.1"
 javalin = "6.7.0"
 slf4j-simple = "2.0.16"
 dotenv-java = "3.2.0"
-jackson-databind = "2.17.2"
+jackson-databind = "2.19.1"
 
 [libraries]
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
