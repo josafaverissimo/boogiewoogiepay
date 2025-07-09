@@ -22,7 +22,10 @@ public class PaymentProcessorUseCase {
         .header("Content-Type", "application/json")
         .build();
 
-      HttpResponse<String> response = HttpClientSingleton.HTTP.send(request, HttpResponse.BodyHandlers.ofString());
+      HttpResponse<String> response = HttpClientSingleton.HTTP.send(
+        request,
+        HttpResponse.BodyHandlers.ofString()
+      );
 
       System.out.println(response.statusCode());
       System.out.println(response.body());
