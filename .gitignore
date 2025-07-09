@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/gradle
 # Edit at https://www.toptal.com/developers/gitignore?templates=gradle
 
+/app/bin/
+
 ### Gradle ###
 .gradle
 **/build/
@@ -45,6 +47,8 @@ gradle-app.setting
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
+
+*.class
 
 # Package Files #
 *.jar
