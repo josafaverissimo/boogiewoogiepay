@@ -18,6 +18,9 @@ public class PayHandlerRouter implements RouterInterface {
       path("payments", () -> {
         post(this.controller::doPay);
       });
+      path("payments-summary", () -> {
+        get(this.controller::payStats);
+      });
     });
   }
 }

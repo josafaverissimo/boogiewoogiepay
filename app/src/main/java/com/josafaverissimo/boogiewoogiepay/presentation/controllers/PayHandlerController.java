@@ -14,4 +14,9 @@ public class PayHandlerController {
 
     context.result(String.valueOf(body.amount()));
   }
+
+  public void payStats(Context context) {
+    // TODO: implements payment processors stats
+    context.result("Hello world");
+  }
 }
