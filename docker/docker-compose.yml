@@ -9,7 +9,7 @@ services:
       - PAYMENT_PROCESSOR_URL_DEFAULT=http://payment-processor-default:8080
       - PAYMENT_PROCESSOR_URL_FALLBACK=http://payment-processor-fallback:8080
     ports:
-      - 7070:8080
+      - 9999:8080
 
 networks:
   bg-api:
