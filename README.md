@@ -1,2 +1,2 @@
 # Boogie Woogie Pay
-A entreprise solution for handling payments requests. ☕
+A enterprise solution for handling payments requests. ☕
