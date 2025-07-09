@@ -1,7 +1,7 @@
 package com.josafaverissimo.boogiewoogiepay.presentation;
 
 import com.josafaverissimo.boogiewoogiepay.presentation.controllers.PayHandlerController;
-import com.josafaverissimo.boogiewoogiepay.presentation.infraestructure.interfaces.RouterInterface;
+import com.josafaverissimo.boogiewoogiepay.infraestructure.interfaces.RouterInterface;
 import com.josafaverissimo.boogiewoogiepay.presentation.routers.PayHandlerRouter;
 
 import io.javalin.Javalin;
