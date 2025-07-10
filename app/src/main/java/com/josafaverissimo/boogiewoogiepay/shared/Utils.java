@@ -14,4 +14,8 @@ public final class Utils {
   public static String nowIsoFormat() {
     return ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
   }
+
+  public static boolean isHttpStatusOk(int status) {
+    return status >= 200 && status <= 299;
+  }
 }

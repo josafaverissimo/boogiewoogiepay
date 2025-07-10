@@ -1,39 +1,33 @@
 package com.josafaverissimo.boogiewoogiepay.infraestructure;
 
+import com.josafaverissimo.boogiewoogiepay.infraestructure.enums.EnvVarEnum;
 import com.josafaverissimo.boogiewoogiepay.infraestructure.exceptions.EnviromentException;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
 public final class AppEnv {
   private final static Dotenv dotenv;
-  private final static String[] requiredEnvVars;
 
   static {
     dotenv = Dotenv.configure().ignoreIfMissing().load();
-    requiredEnvVars = new String[]{
-      "PAYMENT_PROCESSOR_URL_DEFAULT",
-      "PAYMENT_PROCESSOR_URL_FALLBACK"
-    };
   }
 
   private AppEnv() {
   }
 
   public static void checkEnv() throws EnviromentException {
-    var dotenv = AppEnv.getDotenv();
-
-    for (String envVar : AppEnv.requiredEnvVars) {
-      if(dotenv.get(envVar) != null) {
+    for (EnvVarEnum envVar : EnvVarEnum.values()) {
+      if(dotenv.get(envVar.name()) != null) {
         continue;
       }
 
       throw new EnviromentException(
-        String.format("Env var \"%s\" is missing", envVar)
+        String.format("Env var \"%s\" is missing", envVar.name())
       );
     }
   }
 
-  public static Dotenv getDotenv() {
-    return AppEnv.dotenv;
+  public static String get(EnvVarEnum envVar) {
+    return dotenv.get(envVar.name());
   }
 }

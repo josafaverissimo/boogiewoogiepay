@@ -3,15 +3,17 @@ package com.josafaverissimo.boogiewoogiepay.presentation.controllers;
 import com.josafaverissimo.boogiewoogiepay.infraestructure.dtos.PaymentRequestBody;
 import com.josafaverissimo.boogiewoogiepay.infraestructure.external.paymentprocessor.dtos.PaymentProcessorRequestBody;
 import com.josafaverissimo.boogiewoogiepay.shared.Utils;
-import com.josafaverissimo.boogiewoogiepay.usecases.external.paymentprocessor.PaymentProcessorUseCase;
+import com.josafaverissimo.boogiewoogiepay.usecases.PayHandlerUseCase;
 
 import io.javalin.http.Context;
 
 public final class PayHandlerController {
-  private PaymentProcessorUseCase paymentProcessorUseCase;
+  private PayHandlerUseCase payHandlerUseCase;
 
-  public PayHandlerController(PaymentProcessorUseCase paymentProcessorUseCase) {
-    this.paymentProcessorUseCase = paymentProcessorUseCase;
+  public PayHandlerController(
+    PayHandlerUseCase payHandlerUseCase
+  ) {
+    this.payHandlerUseCase = payHandlerUseCase;
   }
   
   public void doPay(Context context) {
@@ -26,13 +28,14 @@ public final class PayHandlerController {
       Utils.nowIsoFormat()
     );
 
-    this.paymentProcessorUseCase.processPayment(paymentProcessorBody);
+    this.payHandlerUseCase.processPayment(paymentProcessorBody);
 
     context.json(paymentProcessorBody);
   }
 
   public void payStats(Context context) {
-    // TODO: implements payment processors stats
-    context.result("Hello world");
+    var response = this.payHandlerUseCase.getPayStats();
+
+    context.json(response);
   }
 }
