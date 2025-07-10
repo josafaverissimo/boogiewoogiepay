@@ -6,6 +6,7 @@ import java.net.http.HttpResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.josafaverissimo.boogiewoogiepay.infraestructure.JsonSingleton;
+import com.josafaverissimo.boogiewoogiepay.infraestructure.enums.EnvVarEnum;
 import com.josafaverissimo.boogiewoogiepay.infraestructure.AppEnv;
 import com.josafaverissimo.boogiewoogiepay.infraestructure.HttpClientSingleton;
 import com.josafaverissimo.boogiewoogiepay.infraestructure.external.paymentprocessor.dtos.PaymentProcessorRequestBody;
@@ -13,7 +14,7 @@ import com.josafaverissimo.boogiewoogiepay.infraestructure.external.paymentproce
 public class PaymentProcessorUseCase {
   public void processPayment(PaymentProcessorRequestBody body) {
     try {
-      var baseUrl = AppEnv.getDotenv().get("PAYMENT_PROCESSOR_URL_DEFAULT");
+      var baseUrl = AppEnv.get(EnvVarEnum.PAYMENT_PROCESSOR_URL_DEFAULT);
       var target = String.format("%s/payments", baseUrl);
       var bodyJson = JsonSingleton.MAPPER.writeValueAsString(body);
       var request = HttpRequest.newBuilder()
