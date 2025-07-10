@@ -16,6 +16,6 @@ public final class Utils {
   }
 
   public static boolean isHttpStatusOk(int status) {
-    return status >= 200 && status <= 299;
+    return status / 100 == 2;
   }
 }
