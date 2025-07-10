@@ -20,7 +20,12 @@ import com.josafaverissimo.boogiewoogiepay.infraestructure.external.paymentproce
 import com.josafaverissimo.boogiewoogiepay.shared.BaseUrl;
 import com.josafaverissimo.boogiewoogiepay.shared.Utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public final class PayHandlerUseCase {
+  private final Logger logger = LoggerFactory.getLogger(PayHandlerUseCase.class);
+
   public PayStatsResponse getPayStats() {
     final var defaultTarget = PaymentProcessorEnum.DEFAULT;
     final var fallbackTarget = PaymentProcessorEnum.FALLBACK;
@@ -63,14 +68,21 @@ public final class PayHandlerUseCase {
         var response = HttpClientSingleton.HTTP.send(request, BodyHandlers.ofString());
 
         if(!Utils.isHttpStatusOk(response.statusCode())) {
+          this.logger.error(
+            String.format(
+              "got bad status code (%d) in %s",
+              response.statusCode(),
+              response.uri()
+            )
+          );
+
           return Optional.empty();
         }
 
-        System.out.println(response.statusCode());
-        System.out.println(response.body());
         var stats = JsonSingleton.MAPPER.readValue(response.body(), PaymentSummaryResponse.class);
 
         return Optional.of(stats);
+
       } catch (IOException e) {
         e.printStackTrace();
 
