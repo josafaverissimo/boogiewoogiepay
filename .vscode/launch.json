@@ -3,11 +3,12 @@
   "configurations": [
     {
       "type": "java",
-      "name": "Launch boogiewoogie App",
+      "name": "Debug Vscode App.java",
       "request": "launch",
       "mainClass": "com.josafaverissimo.boogiewoogiepay.App",
-      "cwd": "${workspaceFolder}/app",
-      "projectName": "app"
+      "projectName": "app",
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal"
     }
   ]
 }
