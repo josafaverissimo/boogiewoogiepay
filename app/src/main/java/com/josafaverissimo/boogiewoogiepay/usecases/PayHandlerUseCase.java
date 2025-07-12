@@ -7,6 +7,9 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.josafaverissimo.boogiewoogiepay.infraestructure.AppEnv;
 import com.josafaverissimo.boogiewoogiepay.infraestructure.HttpClientSingleton;
@@ -19,9 +22,6 @@ import com.josafaverissimo.boogiewoogiepay.infraestructure.external.paymentproce
 import com.josafaverissimo.boogiewoogiepay.infraestructure.external.paymentprocessor.dtos.PaymentSummaryResponse;
 import com.josafaverissimo.boogiewoogiepay.shared.BaseUrl;
 import com.josafaverissimo.boogiewoogiepay.shared.Utils;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class PayHandlerUseCase {
   private final Logger logger = LoggerFactory.getLogger(PayHandlerUseCase.class);
@@ -54,7 +54,8 @@ public final class PayHandlerUseCase {
   }
 
   private Optional<PaymentSummaryResponse> getPaymentProcessorStats(
-      PaymentProcessorEnum paymentProcessor) {
+      PaymentProcessorEnum paymentProcessor
+  ) {
     var baseUrl = new BaseUrl(paymentProcessor.getUrl());
     var target = baseUrl.joinEndpoint("/admin/payments-summary");
 
@@ -97,21 +98,18 @@ public final class PayHandlerUseCase {
 
   public void processPayment(PaymentProcessorRequestBody body) {
     try {
-      var baseUrl = AppEnv.get(EnvVarEnum.PAYMENT_PROCESSOR_URL_DEFAULT);
-      var target = String.format("%s/payments", baseUrl);
+      var baseUrl = new BaseUrl(PaymentProcessorEnum.FALLBACK.getUrl());
+      var target = baseUrl.joinEndpoint("/payments");
       var bodyJson = JsonSingleton.MAPPER.writeValueAsString(body);
       var request = HttpRequest.newBuilder()
           .POST(HttpRequest.BodyPublishers.ofString(bodyJson))
-          .uri(URI.create(target))
+          .uri(target)
           .header("Content-Type", "application/json")
           .build();
 
       var response = HttpClientSingleton.HTTP.send(
           request,
           HttpResponse.BodyHandlers.ofString());
-
-      System.out.println(response.statusCode());
-      System.out.println(response.body());
 
     } catch (JsonProcessingException e) {
       e.printStackTrace();
