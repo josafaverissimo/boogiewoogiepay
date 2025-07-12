@@ -1,7 +1,9 @@
 package com.josafaverissimo.boogiewoogiepay.presentation.controllers;
 
 import com.josafaverissimo.boogiewoogiepay.infraestructure.dtos.PaymentRequestBody;
+import com.josafaverissimo.boogiewoogiepay.infraestructure.enums.PaymentProcessorEnum;
 import com.josafaverissimo.boogiewoogiepay.infraestructure.external.paymentprocessor.dtos.PaymentProcessorRequestBody;
+import static com.josafaverissimo.boogiewoogiepay.infraestructure.validators.PaymentRequestBodyValidator.*;
 import com.josafaverissimo.boogiewoogiepay.shared.Utils;
 import com.josafaverissimo.boogiewoogiepay.usecases.PayHandlerUseCase;
 
@@ -11,16 +13,21 @@ public final class PayHandlerController {
   private PayHandlerUseCase payHandlerUseCase;
 
   public PayHandlerController(
-    PayHandlerUseCase payHandlerUseCase
-  ) {
+      PayHandlerUseCase payHandlerUseCase) {
     this.payHandlerUseCase = payHandlerUseCase;
   }
-  
+
   public void doPay(Context context) {
     var body = context.bodyValidator(PaymentRequestBody.class)
-      .check(obj -> !Utils.isStrEmpty(obj.correlationId()), "correlationId must be no empty")
-      .check(obj -> obj.amount() > 0, "amount must be greater than 0")
-      .get();
+    .check(
+      obj -> validateCorrelationId(obj.correlationId()),
+      CORRELATION_ID_ERROR
+    )
+    .check(
+      obj -> validateAmount(obj.amount()),
+      AMOUNT_ERROR
+    )
+    .get();
 
     var paymentProcessorBody = new PaymentProcessorRequestBody(
       body.correlationId(),
@@ -28,9 +35,23 @@ public final class PayHandlerController {
       Utils.nowIsoFormat()
     );
 
-    this.payHandlerUseCase.processPayment(paymentProcessorBody);
+    var successOnPay = this.payHandlerUseCase.processPayment(
+      paymentProcessorBody,
+      PaymentProcessorEnum.DEFAULT
+    );
 
-    context.json(paymentProcessorBody);
+    if(!successOnPay) {
+      successOnPay = this.payHandlerUseCase.processPayment(
+        paymentProcessorBody,
+        PaymentProcessorEnum.FALLBACK
+      );
+    }
+
+    if(!successOnPay) {
+      context.status(503);
+    }
+
+    context.status(204);
   }
 
   public void payStats(Context context) {
