@@ -1,7 +1,7 @@
 services:
-  bg-api:
+  bg-api-1: &bg-api
     image: josafaverissimo/boogie-woogie-pay:latest
-    hostname: boogie-woogie-pay
+    hostname: bg-api-1
     networks:
       - bg-api
       - payment-processor
@@ -9,13 +9,34 @@ services:
       - PAYMENT_PROCESSOR_URL_DEFAULT=http://payment-processor-default:8080
       - PAYMENT_PROCESSOR_URL_FALLBACK=http://payment-processor-fallback:8080
       - X_RINHA_TOKEN=123
-    ports:
-      - 9999:9999
     deploy:
       resources:
         limits:
-          cpus: "1.5"
-          memory: "350MB"
+          cpus: "0.5"
+          memory: "150MB"
+
+  bg-api-2:
+    <<: *bg-api
+    hostname: bg-api-2
+
+  nginx:
+    image: nginx:1.27.0-alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "9999:9999"
+    networks:
+      - payment-processor
+      - bg-api
+    depends_on:
+      - bg-api-1
+      - bg-api-2
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: "15MB"
+
 
 networks:
   bg-api:
