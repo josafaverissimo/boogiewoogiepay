@@ -7,7 +7,7 @@
       "request": "launch",
       "mainClass": "com.josafaverissimo.boogiewoogiepay.App",
       "projectName": "app",
-      "envFile": "${workspaceFolder}/.env",
+      "cwd": "${workspaceFolder}/app",
       "console": "integratedTerminal"
     }
   ]
