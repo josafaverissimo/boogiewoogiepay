@@ -1,7 +1,6 @@
 package com.josafaverissimo.boogiewoogiepay.usecases;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
@@ -54,7 +53,7 @@ public final class PayHandlerUseCase {
   }
 
   private Optional<PaymentSummaryResponse> getPaymentProcessorStats(
-      PaymentProcessorEnum paymentProcessor
+    PaymentProcessorEnum paymentProcessor
   ) {
     var baseUrl = new BaseUrl(paymentProcessor.getUrl());
     var target = baseUrl.joinEndpoint("/admin/payments-summary");
@@ -96,28 +95,36 @@ public final class PayHandlerUseCase {
     }
   }
 
-  public void processPayment(PaymentProcessorRequestBody body) {
+  public boolean processPayment(
+    PaymentProcessorRequestBody body,
+    PaymentProcessorEnum paymentProcessor
+  ) {
     try {
-      var baseUrl = new BaseUrl(PaymentProcessorEnum.FALLBACK.getUrl());
+      var baseUrl = new BaseUrl(paymentProcessor.getUrl());
       var target = baseUrl.joinEndpoint("/payments");
       var bodyJson = JsonSingleton.MAPPER.writeValueAsString(body);
       var request = HttpRequest.newBuilder()
-          .POST(HttpRequest.BodyPublishers.ofString(bodyJson))
-          .uri(target)
-          .header("Content-Type", "application/json")
-          .build();
+        .POST(HttpRequest.BodyPublishers.ofString(bodyJson))
+        .uri(target)
+        .header("Content-Type", "application/json")
+        .build();
 
       var response = HttpClientSingleton.HTTP.send(
-          request,
-          HttpResponse.BodyHandlers.ofString());
+        request,
+        HttpResponse.BodyHandlers.ofString());
 
-    } catch (JsonProcessingException e) {
+      return Utils.isHttpStatusOk(response.statusCode());
+
+    } catch (InterruptedException e) {
       e.printStackTrace();
 
-      return;
-    } catch (Exception e) {
+      return false;
+
+    } catch (IOException e) {
       e.printStackTrace();
+
+      return false;
+
     }
   }
-
 }
