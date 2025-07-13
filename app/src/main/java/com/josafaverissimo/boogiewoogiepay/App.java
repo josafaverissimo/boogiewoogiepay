@@ -20,8 +20,6 @@ public class App {
     var router = new Router();
     
     Javalin.create(config -> {
-      config.useVirtualThreads = true;
-
       router.register(config);
     }).start(9999);
   }

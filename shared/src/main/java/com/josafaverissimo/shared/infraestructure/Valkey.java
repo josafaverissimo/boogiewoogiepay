@@ -13,6 +13,7 @@ import com.josafaverissimo.shared.enums.ValkeyQueueEnum;
 import io.valkey.Jedis;
 import io.valkey.JedisPool;
 import io.valkey.JedisPoolConfig;
+import io.valkey.exceptions.JedisConnectionException;
 
 public final class Valkey {
   private static Valkey instance;
@@ -22,9 +23,9 @@ public final class Valkey {
 
   private Valkey() {
     jedisPoolConfig = new io.valkey.JedisPoolConfig();
-    jedisPoolConfig.setMaxTotal(32);
-    jedisPoolConfig.setMaxIdle(32);
-    jedisPoolConfig.setMinIdle(16);
+    jedisPoolConfig.setMaxTotal(4);
+    jedisPoolConfig.setMaxIdle(4);
+    jedisPoolConfig.setMinIdle(1);
 
     var valkeyHost = AppEnv.get(EnvVarEnum.VALKEY_HOST).orElse("bg-valkey");
     int valkeyPort = 0;

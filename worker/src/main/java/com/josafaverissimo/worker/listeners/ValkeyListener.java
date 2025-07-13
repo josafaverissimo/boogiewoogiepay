@@ -23,10 +23,10 @@ public final class ValkeyListener {
     processPaymentTask = new ProcessPaymentTask(processPaymentUseCase);
   }
 
-  public static void listen() {
+  public static boolean listen() {
     var queue = ValkeyQueueEnum.PROCESS_PAYMENT_QUEUE;
 
-    Valkey.getInstance().subscribeQueue(
+    return Valkey.getInstance().subscribeQueue(
       queue,
       data -> {
         if(data.isEmpty()) {
