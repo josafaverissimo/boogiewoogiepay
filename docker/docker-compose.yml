@@ -14,8 +14,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"
-          memory: "97.5MB"
+          cpus: "0.675"
+          memory: "127.5MB"
 
   bg-api-2:
     <<: *bg-api
@@ -36,12 +36,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.25"
-          memory: "165MB"
-
-  # worker-2:
-  #   <<: *worker
-  #   hostname: bg-worker-2
+          cpus: "0.3"
+          memory: "135MB"
 
   nginx:
     image: nginx:1.27.0-alpine
@@ -58,7 +54,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.25"
+          cpus: "0.125"
           memory: "10MB"
   
   bg-valkey:
