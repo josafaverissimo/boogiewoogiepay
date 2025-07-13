@@ -9,7 +9,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.josafaverissimo.boogiewoogiepay.infraestructure.AppEnv;
 import com.josafaverissimo.boogiewoogiepay.infraestructure.HttpClientSingleton;
 import com.josafaverissimo.boogiewoogiepay.infraestructure.JsonSingleton;
