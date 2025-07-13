@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.josafaverissimo.shared.enums.EnvVarEnum;
 import com.josafaverissimo.shared.enums.ValkeyQueueEnum;
 
 import io.valkey.Jedis;
@@ -14,25 +15,53 @@ import io.valkey.JedisPool;
 import io.valkey.JedisPoolConfig;
 
 public final class Valkey {
-  private final static JedisPoolConfig jedisPoolConfig;
-  private final static JedisPool jedisPool;
-  private final static Logger logger;
+  private static Valkey instance;
+  private final JedisPoolConfig jedisPoolConfig;
+  private final JedisPool jedisPool;
+  private final Logger logger;
 
-  static {
+  private Valkey() {
     jedisPoolConfig = new io.valkey.JedisPoolConfig();
     jedisPoolConfig.setMaxTotal(32);
     jedisPoolConfig.setMaxIdle(32);
     jedisPoolConfig.setMinIdle(16);
 
-    jedisPool = new JedisPool(jedisPoolConfig, "localhost", 9927);
+    var valkeyHost = AppEnv.get(EnvVarEnum.VALKEY_HOST).orElse("bg-valkey");
+    int valkeyPort = 0;
+    var rawValkeyPort = AppEnv.get(EnvVarEnum.VALKEY_PORT).orElse("6379");
 
     logger = LoggerFactory.getLogger(Valkey.class);
+
+    try {
+      valkeyPort = Integer.valueOf(rawValkeyPort);
+
+    } catch(Exception e) {
+      logger.error(
+        String.format("Valkey port is not a valid int: %s", rawValkeyPort)
+      );
+
+      valkeyPort = 6379;
+    }
+
+    logger.info(
+      String.format(
+        "Trying to connect to valkey: %s, %d", valkeyHost, valkeyPort
+      )
+    );
+
+    jedisPool = new JedisPool(jedisPoolConfig, valkeyHost, valkeyPort);
   }
 
-  private Valkey() {}
+  public static Valkey getInstance() {
+    if(Valkey.instance == null) {
+      Valkey.instance = new Valkey();
+    }
 
-  private static boolean withJedis(Consumer<Jedis> consumer) {
-    try (Jedis jedis = jedisPool.getResource()) {
+    return Valkey.instance;
+  }
+
+  private boolean withJedis(Consumer<Jedis> consumer) {
+    try (Jedis jedis = this.jedisPool.getResource()) {
       consumer.accept(jedis);
 
       return true;
@@ -43,11 +72,11 @@ public final class Valkey {
     }
   }
 
-  public static boolean pushQueue(ValkeyQueueEnum queue, String data) {
+  public boolean pushQueue(ValkeyQueueEnum queue, String data) {
     return withJedis(jedis -> jedis.lpush(queue.getQueue(), data));
   }
   
-  public static boolean subscribeQueue(
+  public boolean subscribeQueue(
     ValkeyQueueEnum queue,
     Consumer<Optional<String>> consumer
   ) {

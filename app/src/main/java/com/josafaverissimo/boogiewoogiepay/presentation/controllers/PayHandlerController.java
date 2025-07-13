@@ -48,7 +48,7 @@ public final class PayHandlerController {
     }
 
     var queue = ValkeyQueueEnum.PROCESS_PAYMENT_QUEUE;
-    var success = Valkey.pushQueue(queue, bodyJsonString);
+    var success = Valkey.getInstance().pushQueue(queue, bodyJsonString);
 
     if(!success) {
       context.status(503);

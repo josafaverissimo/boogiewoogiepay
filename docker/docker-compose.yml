@@ -1,6 +1,6 @@
 services:
   bg-api-1: &bg-api
-    image: josafaverissimo/boogie-woogie-pay:latest
+    image: josafaverissimo/boogie-woogie-pay-api:latest
     hostname: bg-api-1
     networks:
       - bg-api
@@ -10,20 +10,20 @@ services:
       - PAYMENT_PROCESSOR_URL_FALLBACK=http://payment-processor-fallback:8080
       - X_RINHA_TOKEN=123
     depends_on:
-      - valkey
+      - bg-valkey
     deploy:
       resources:
         limits:
-          cpus: "0.5"
-          memory: "150MB"
+          cpus: "0.25"
+          memory: "80MB"
 
   bg-api-2:
     <<: *bg-api
     hostname: bg-api-2
 
-  worker:
+  worker-1: &worker
     image: josafaverissimo/boogie-woogie-pay-worker:latest
-    hostname: bg-worker
+    hostname: bg-worker-1
     networks:
       - bg-api
       - payment-processor
@@ -32,12 +32,16 @@ services:
       - PAYMENT_PROCESSOR_URL_FALLBACK=http://payment-processor-fallback:8080
       - X_RINHA_TOKEN=123
     depends_on:
-      - valkey
+      - bg-valkey
     deploy:
       resources:
         limits:
           cpus: "0.25"
-          memory: "35MB"
+          memory: "80MB"
+
+  worker-2:
+    <<: *worker
+    hostname: bg-worker-2
 
   nginx:
     image: nginx:1.27.0-alpine
@@ -54,16 +58,24 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.25"
-          memory: "15MB"
+          cpus: "0.2"
+          memory: "25MB"
   
-  valkey:
+  bg-valkey:
     image: valkey/valkey:8.1.3-alpine
+    hostname: bg-valkey
+    networks:
+      - payment-processor
+      - bg-api
     ports:
       - "9927:6379"
     volumes:
       - bgpay-valkey-data:/data
-
+    deploy:
+      resources:
+        limits:
+          cpus: "0.3"
+          memory: "25MB"
 
 networks:
   bg-api:

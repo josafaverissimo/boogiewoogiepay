@@ -8,8 +8,6 @@ import com.josafaverissimo.worker.infraestructure.dtos.ProcessPaymentDto;
 import com.josafaverissimo.shared.enums.ValkeyQueueEnum;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +25,8 @@ public final class ValkeyListener {
 
   public static void listen() {
     var queue = ValkeyQueueEnum.PROCESS_PAYMENT_QUEUE;
-    ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
-    Valkey.subscribeQueue(
+    Valkey.getInstance().subscribeQueue(
       queue,
       data -> {
         if(data.isEmpty()) {
@@ -44,7 +41,7 @@ public final class ValkeyListener {
           try {
             var processPaymentDto = Json.read(json, ProcessPaymentDto.class);
 
-            executor.submit(() -> processPaymentTask.run(processPaymentDto));
+            processPaymentTask.run(processPaymentDto);
 
           } catch(IOException e) {
             logger.error(
