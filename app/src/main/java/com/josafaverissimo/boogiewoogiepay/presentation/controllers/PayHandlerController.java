@@ -1,16 +1,23 @@
 package com.josafaverissimo.boogiewoogiepay.presentation.controllers;
 
 import com.josafaverissimo.boogiewoogiepay.infraestructure.dtos.PaymentRequestBody;
-import com.josafaverissimo.boogiewoogiepay.infraestructure.enums.PaymentProcessorEnum;
-import com.josafaverissimo.boogiewoogiepay.infraestructure.external.paymentprocessor.dtos.PaymentProcessorRequestBody;
 import static com.josafaverissimo.boogiewoogiepay.infraestructure.validators.PaymentRequestBodyValidator.*;
-import com.josafaverissimo.boogiewoogiepay.shared.Utils;
+
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.josafaverissimo.boogiewoogiepay.usecases.PayHandlerUseCase;
+import com.josafaverissimo.shared.Json;
+import com.josafaverissimo.shared.enums.ValkeyQueueEnum;
+import com.josafaverissimo.shared.infraestructure.Valkey;
 
 import io.javalin.http.Context;
 
 public final class PayHandlerController {
-  private PayHandlerUseCase payHandlerUseCase;
+  private final PayHandlerUseCase payHandlerUseCase;
+  private final Logger logger = LoggerFactory.getLogger(PayHandlerController.class);
 
   public PayHandlerController(
       PayHandlerUseCase payHandlerUseCase) {
@@ -29,27 +36,30 @@ public final class PayHandlerController {
     )
     .get();
 
-    var paymentProcessorBody = new PaymentProcessorRequestBody(
-      body.correlationId(),
-      body.amount(),
-      Utils.nowIsoFormat()
-    );
+    String bodyJsonString = null;
 
-    var successOnPay = this.payHandlerUseCase.processPayment(
-      paymentProcessorBody,
-      PaymentProcessorEnum.DEFAULT
-    );
+    try {
+      bodyJsonString = Json.stringify(body);
 
-    if(!successOnPay) {
-      successOnPay = this.payHandlerUseCase.processPayment(
-        paymentProcessorBody,
-        PaymentProcessorEnum.FALLBACK
-      );
+    } catch (IOException e) {
+      context.status(400);
+
+      return;
     }
 
-    if(!successOnPay) {
+    var queue = ValkeyQueueEnum.PROCESS_PAYMENT_QUEUE;
+    var success = Valkey.getInstance().pushQueue(queue, bodyJsonString);
+
+    if(!success) {
       context.status(503);
+
+      return;
     }
+
+    logger.info(
+      String.format("Body data has been sent to queue %s", queue.getQueue())
+    );
+    logger.debug(String.format("Data sent: %s", bodyJsonString));
 
     context.status(204);
   }

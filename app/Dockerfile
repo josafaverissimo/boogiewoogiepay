@@ -1,7 +1,7 @@
-FROM eclipse-temurin:21-alpine
+FROM eclipse-temurin:24-alpine
 
 COPY build/libs/app-all.jar /app.jar
 
-EXPOSE 8080 
+EXPOSE 9999 
 
 ENTRYPOINT ["java", "-jar", "/app.jar"]
