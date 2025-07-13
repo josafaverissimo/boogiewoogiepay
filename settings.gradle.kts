@@ -11,4 +11,4 @@ plugins {
 }
 
 rootProject.name = "boogiewoogiepay"
-include("app")
+include("app", "worker", "shared")
