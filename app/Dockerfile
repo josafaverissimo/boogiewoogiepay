@@ -1,7 +1,7 @@
-FROM eclipse-temurin:24-alpine
+FROM debian:bookworm-slim
 
-COPY build/libs/app-all.jar /app.jar
+COPY /build/native/nativeCompile/app /app
 
 EXPOSE 9999 
 
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["/app"]

@@ -1,7 +1,7 @@
-FROM eclipse-temurin:24-alpine
+FROM debian:bookworm-slim
 
-COPY build/libs/worker-all.jar /worker.jar
+COPY /build/native/nativeCompile/worker /worker
 
 EXPOSE 9999 
 
-ENTRYPOINT ["java", "-jar", "/worker.jar"]
+ENTRYPOINT ["/worker"]
