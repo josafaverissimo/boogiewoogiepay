@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.josafaverissimo.shared.BaseUrl;
 import com.josafaverissimo.shared.Utils;
-import com.josafaverissimo.worker.infraestructure.AppEnv;
-import com.josafaverissimo.worker.infraestructure.enums.EnvVarEnum;
 import com.josafaverissimo.worker.infraestructure.enums.PaymentProcessorEnum;
 import com.josafaverissimo.worker.infraestructure.providers.HttpClientProvider;
 
