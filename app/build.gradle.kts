@@ -29,7 +29,7 @@ dependencies {
     implementation(libs.dotenv.java)
     implementation(libs.jackson.databind)
 
-    implementation(project(":shared"))
+    implementation(project(":subs:shared"))
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

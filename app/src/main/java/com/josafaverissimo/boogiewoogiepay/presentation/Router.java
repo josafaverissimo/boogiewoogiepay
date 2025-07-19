@@ -14,8 +14,10 @@ public class Router implements RouterInterface {
   public Router() {
     this.payHandlerUseCase = new PayHandlerUseCase();
     this.payHandlerRouter = new PayHandlerRouter(
-        new PayHandlerController(
-            this.payHandlerUseCase));
+      new PayHandlerController(
+        this.payHandlerUseCase
+      )
+    );
 
   }
 
