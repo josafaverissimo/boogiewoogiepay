@@ -17,11 +17,14 @@ graph LR
         Backend1 --> Redis[Redis]
         Backend2 --> Redis
         Redis --> Worker[Worker]
+
     end
     
     subgraph PaymentProcessor
-        Worker --> PaymentProcessorDefault[Default Processor]
-        PaymentProcessorDefault --> PaymentProcessorFallback[Fallback Processor]
+        Worker --> PaymentProcessorDefault
+        Worker --> PaymentProcessorFallback
+        PaymentProcessorDefault[Default Processor]
+        PaymentProcessorFallback[Fallback Processor]
     end
 
     BancoCentral[Banco Central] --> Nginx
