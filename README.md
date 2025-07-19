@@ -39,8 +39,8 @@ graph LR
 
 ## App Flow
 
-1. Requests are handled by nginx, then it choose what backend will
-process the request.
+1. Requests are handled by Nginx, which then chooses which backend will process
+the request.
 
 2. When recieve the request, the API, just adds the request data into the Redis
 queue.
