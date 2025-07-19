@@ -16,7 +16,7 @@ dependencies {
   implementation(libs.jackson.databind)
   implementation(libs.valkey.java)
 
-  implementation(project(":shared"))
+  implementation(project(":subs:shared"))
 }
 
 java {
